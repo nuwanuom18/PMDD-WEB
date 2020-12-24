@@ -1,0 +1,79 @@
+
+<!----------------After Blog Post Area---------------->
+<br>
+<div class="text-center bg-light text-dark">
+    <h3>My Blogs</h3>
+</div>
+<hr>
+<br>
+
+<div class="row container-fluid bg-3">
+    <div class="col-sm-12" id="blogs">
+
+    </div>
+</div>
+<script>
+    //********************retrive and desplay data from firebase******************************
+    
+    var user = firebase.auth().currentUser;
+    var dbBlogs = firebase.database().ref().child("Blogs").orderByChild("uid").equalTo(user.uid);
+    dbBlogs.on("value", function (blogs) {
+        if (blogs.exists) {
+            var blogsHtml = "";
+            blogs.forEach(function (singleBlog) {
+                counter += 1;
+                blogsHtml += "<div class = 'jumbotron bg-light text-dark border border-dark'>";
+                blogsHtml += "<div > <img width = '1000px' height = '550px' src='";
+                blogsHtml += singleBlog.val().image;
+                blogsHtml += "'/></div><br>"
+
+                blogsHtml += "<div class='row'>";
+                blogsHtml += "<div class= 'col-sm-5'><p style='color:grey;'>" +
+                    "Published by: " + singleBlog.val().username
+                    + "</p></div>" +
+                    "<div class= 'col-sm-3'><p style='color:grey;'>" +
+                    "Time : " + singleBlog.val().time
+                    + "</p></div>" +
+                    "<div class= 'col-sm-4'><p style='color:grey; margin-left:85px; '>" +
+                    "Date: " + singleBlog.val().date
+                    + "</p></div>";
+
+                blogsHtml += "</div><br>"
+
+                blogsHtml += "<div style='text-align: justify; color: black; font-size:30px; line-height: 200%;'>";
+                blogsHtml += singleBlog.val().desc;
+                blogsHtml += "</div><br>"
+
+                blogsHtml += "<div class='form-group' style='text-align: justify; color: black'>";
+                blogsHtml+="<button class='form-control btn btn-light bg-dark text-white' onclick=deleteblogRecord('"+singleBlog.key+"')>Delete</botton>"
+                blogsHtml += "</div><br>"
+
+
+                blogsHtml += "</div>"
+            });
+            $("#blogs").html(blogsHtml);
+        }
+    });
+
+
+    //********************retrive and desplay data from firebase******************************
+    function deleteblogRecord(key){
+        var deleteref = firebase.database().ref().child("Blogs").child(key);
+        return deleteref.remove().then(
+            function(){
+                console.log("delete successfully");
+
+            }
+        ).catch(function(){
+                console.log("Error occured");
+        });
+
+    }
+
+
+
+</script>
+
+
+<!---------------End Validation and uploading of post blogs---------------->
+
